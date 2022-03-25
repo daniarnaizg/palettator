@@ -1,0 +1,107 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/style.css">
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <script src="https://kit.fontawesome.com/40fc428301.js" crossorigin="anonymous"></script>
+    <title>Palettator</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="search_wrap search_wrap_1">
+            <div class="search_box">
+                <input type="text" id="query-name" class="input" name="query-name" placeholder="Color de qué? ..."
+                    required minlength="4" maxlength="100" size="10">
+                <div class="btn btn_common" onclick="getPalette()">
+                    <i class="fa-solid fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="h1-loading">
+        <h1 id="query-name-h1"></h1>
+    </div>
+
+    <section class="hero-section">
+        <ul class="flex-container" id="flex-container"></ul>
+    </section>
+
+    <div class="scrollToTopBtn"><a class="fa fa-angle-up" href="#"></a></div>
+
+    <script>
+        async function getPalette() {
+
+            //check if the input is empty
+            if (document.getElementById("query-name").value == "") {
+                alert("Can't be empty");
+                return;
+            }
+
+            var query = document.getElementById("query-name").value;
+            console.log(query);
+            document.getElementById('flex-container').innerHTML = '';
+
+            // create a a loading text that will be shown while the data is being fetched
+            var loading = document.createElement('a');
+            loading.className = 'loading';
+            loading.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            document.getElementById('h1-loading').appendChild(loading);
+
+
+            const url = 'http://localhost:8000/getpalette/' + query;
+
+            fetch(url).then((Response) => {
+                return Response.json()
+            }).then((data) => {
+
+                // remove the loading animation
+                document.getElementById('h1-loading').removeChild(loading);
+
+                // show the name of the palette
+                document.getElementById('query-name-h1').innerHTML = query.toLowerCase();
+
+                // iterate over the data and create a new li for each Color
+                for (let i = 0; i < data[query].length; i++) {
+                    let li = document.createElement('li');
+                    let a = document.createElement('a');
+                    li.className = 'flex-item';
+                    li.style.backgroundColor = data[query][i];
+                    a.innerHTML = data[query][i].toUpperCase();
+                    a.id = 'hex-code'
+                    li.appendChild(a);
+                    document.getElementById('flex-container').appendChild(li);
+                }
+                console.log(data[query]);
+                // var palette = data[query];
+            }).catch((error) => {
+                document.getElementById('h1-loading').removeChild(loading);
+                alert("Not enough images found. Try again.");
+                console.error('caguenlaputa:', error);
+
+            });
+
+            // show the title of the palette
+            document.getElementById('query-name-h1').innerHTML = "";
+
+            //clear the input after the search
+            document.getElementById("query-name").value = "";
+        }
+
+        // execute getPalette() when search box has text and enter key is pressed
+        document.getElementById("query-name").addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                getPalette();
+            }
+        });
+
+    </script>
+
+
+</body>
+
+</html>
