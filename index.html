@@ -51,10 +51,10 @@
             loading.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             document.getElementById('h1-loading').appendChild(loading);
 
-
             const url = 'http://localhost:8000/getpalette/' + query;
 
             fetch(url).then((Response) => {
+                console.log(url);
                 return Response.json()
             }).then((data) => {
 
@@ -92,13 +92,12 @@
         }
 
         // execute getPalette() when search box has text and enter key is pressed
-        document.getElementById("query-name").addEventListener("keyup", function(event) {
+        document.getElementById("query-name").addEventListener("keyup", function (event) {
             event.preventDefault();
             if (event.keyCode === 13) {
                 getPalette();
             }
         });
-
     </script>
 
 
