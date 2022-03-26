@@ -13,26 +13,126 @@
     <div class="container">
         <div class="search_wrap search_wrap_1">
             <div class="search_box">
-                <input type="text" id="query-name" class="input" name="query-name" placeholder="Color de qué? ..."
-                    required minlength="4" maxlength="100" size="10">
+                <input type="text" id="query-name" class="input" name="query-name" placeholder="Search..." required
+                    minlength="4" maxlength="100" size="10">
                 <div class="btn btn_common" onclick="getPalette()">
                     <i class="fa-solid fa-angle-right"></i>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="h1-loading">
-        <h1 id="query-name-h1"></h1>
-    </div>
+        <section class="settings-section">
+            <div class="settings-container">
 
-    <section class="hero-section">
-        <ul class="flex-container" id="flex-container"></ul>
-    </section>
+                <div class="slider-container">
+
+                    <div class="num-colors-slider">
+                        <div class="slider-value size">
+                            <p>Palette size:</p>
+                            <p id="size-value">8</p>
+                        </div>  
+                        <input type="range" min="2" max="12" value="8" class="slider" id="numColors">
+                    </div>
+                    <div class="num-images-slider">
+                        <div class="slider-value images">
+                            <p>Number of images: <i class="fa-solid fa-circle-info"><span class="tooltiptext">Number of images to process. This will affect the loading time</span></i></p>
+                            <p id="images-value">20</p>
+                        </div>
+                        <input type="range" min="10" max="200" value="20" step="10" class="slider" id="numImages">
+                    </div>
+
+                </div>
+
+                <section class="checkbox-section">
+                    <p>Color preferences:</p>
+                    <div class="checkbox-list">
+                        <div class="checkbox-col 1">
+                            <div class="checkbox-item turquoise">
+                                <input type="checkbox" class="checkbox" id="turquoise" value="turquoise"><label
+                                    for="turquoise">turquoise</label>
+                            </div>
+                            <div class="checkbox-item orange">
+                                <input type="checkbox" class="checkbox" id="orange" value="orange"><label
+                                    for="orange">orange</label>
+                            </div>
+                            <div class="checkbox-item yellow">
+                                <input type="checkbox" class="checkbox" id="yellow" value="yellow"><label
+                                    for="yellow">yellow</label>
+                            </div>
+                            <div class="checkbox-item brown">
+                                <input type="checkbox" class="checkbox" id="brown" value="brown"><label
+                                    for="brown">brown</label>
+                            </div>
+                        </div>
+                        <div class="checkbox-col 2">
+                            <div class="checkbox-item green">
+                                <input type="checkbox" class="checkbox" id="green" value="green"><label
+                                    for="green">green</label>
+                            </div>
+                            <div class="checkbox-item red">
+                                <input type="checkbox" class="checkbox" id="red" value="red"><label
+                                    for="red">red</label>
+                            </div>
+                            <div class="checkbox-item blue">
+                                <input type="checkbox" class="checkbox" id="blue" value="blue"><label
+                                    for="blue">blue</label>
+                            </div>
+                            <div class="checkbox-item black">
+                                <input type="checkbox" class="checkbox" id="black" value="black"><label
+                                    for="black">black</label>
+                            </div>
+                        </div>
+                        <div class="checkbox-col 3">
+                            <div class="checkbox-item lilac">
+                                <input type="checkbox" class="checkbox" id="lilac" value="lilac"><label
+                                    for="lilac">lilac</label>
+                            </div>
+                            <div class="checkbox-item pink">
+                                <input type="checkbox" class="checkbox" id="pink" value="pink"><label
+                                    for="pink">pink</label>
+                            </div>
+                            <div class="checkbox-item white">
+                                <input type="checkbox" class="checkbox" id="white" value="white"><label
+                                    for="white">white</label>
+                            </div>
+                            <div class="checkbox-item gray">
+                                <input type="checkbox" class="checkbox" id="gray" value="gray"><label
+                                    for="gray">gray</label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </section>
+
+        <div id="h1-loading">
+            <h1 id="query-name-h1"></h1>
+        </div>
+
+        <section class="hero-section">
+            <ul class="flex-container" id="flex-container"></ul>
+        </section>
+    </div>
 
     <div class="scrollToTopBtn"><a class="fa fa-angle-up" href="#"></a></div>
 
     <script>
+
+        // update slider values
+        const colors_slider = document.getElementById('numColors');
+        const colors_value = document.getElementById('size-value');
+        colors_slider.oninput = function() {
+            colors_value.innerHTML = this.value;
+        }
+
+        const images_slider = document.getElementById('numImages');
+        const images_value = document.getElementById('images-value');
+        images_slider.oninput = function() {
+            images_value.innerHTML = this.value;
+        }
+
+
         async function getPalette() {
 
             //check if the input is empty
@@ -41,8 +141,32 @@
                 return;
             }
 
+            // get params
+
+            // get numColors slider value
+            var numColors = document.getElementById("numColors").value;
+            console.log(numColors);
+
+            // var numImages = 30;
+            var numImages = document.getElementById("numImages").value;
+            console.log(numImages);
+
+            // var colorList = ["blue", "transparent", "red"];
+            //get colorList value from checkboxes
+            var colorList = [];
+            var checkboxes = document.getElementsByClassName("checkbox");
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    colorList.push(checkboxes[i].value);
+                }
+            }
+            console.log(colorList);
+
+            // get the input value
             var query = document.getElementById("query-name").value;
             console.log(query);
+
+            //empty the color palette container
             document.getElementById('flex-container').innerHTML = '';
 
             // create a a loading text that will be shown while the data is being fetched
@@ -51,7 +175,12 @@
             loading.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             document.getElementById('h1-loading').appendChild(loading);
 
-            const url = 'http://localhost:8000/getpalette/' + query;
+            // const url = 'http://localhost:8000/getpalette/' + query;
+
+            // build url with query and params
+            const url = 'http://localhost:8000/getpalette/' + query + '?numColors=' + numColors +
+                '&numImages=' +
+                numImages + '&colorList=' + colorList;
 
             fetch(url).then((Response) => {
                 console.log(url);
@@ -80,7 +209,7 @@
             }).catch((error) => {
                 document.getElementById('h1-loading').removeChild(loading);
                 alert("Not enough images found. Try again.");
-                console.error('caguenlaputa:', error);
+                console.error('Error:', error);
 
             });
 
