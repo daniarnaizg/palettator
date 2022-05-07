@@ -1,0 +1,265 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/style.css">
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <script src="https://kit.fontawesome.com/40fc428301.js" crossorigin="anonymous"></script>
+    <title>Palettator</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="search_wrap search_wrap_1">
+            <div class="search_box">
+                <input type="text" id="query-name" class="input" name="query-name" placeholder="Search..." required
+                    minlength="4" maxlength="100" size="10">
+                <div class="settings-toggle" id="settings-button" onclick="toggle_settings()">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+                <div class="btn btn_common" onclick="getPalette()">
+                    <i class="fa-solid fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <section class="settings-section" id="settings-section" >
+            <div class="settings-container">
+
+                <div class="slider-container">
+
+                    <div class="num-colors-slider">
+                        <div class="slider-value size">
+                            <p>Palette size:</p>
+                            <p id="size-value">8</p>
+                        </div>
+                        <input type="range" min="2" max="12" value="8" class="slider" id="numColors">
+                    </div>
+                    <div class="num-images-slider">
+                        <div class="slider-value images">
+                            <p>Number of images:
+                            </p>
+                            <div class="tooltip-container">
+                                <i class="fas fa-circle-info tooltip-trigger"></i>
+                                <div class="tooltip-one">
+                                    Number of images to process. This will affect the loading time.
+                                </div>
+                            </div>
+                            <p id="images-value">20</p>
+                        </div>
+                        <input type="range" min="10" max="200" value="20" step="10" class="slider" id="numImages">
+                    </div>
+
+                </div>
+
+                <section class="checkbox-section">
+                    <p>Color preferences:</p>
+                    <div class="checkbox-list">
+                        <div class="checkbox-col 1">
+                            <div class="checkbox-item turquoise">
+                                <input type="checkbox" class="checkbox" id="turquoise" value="turquoise"><label
+                                    for="turquoise">turquoise</label>
+                            </div>
+                            <div class="checkbox-item orange">
+                                <input type="checkbox" class="checkbox" id="orange" value="orange"><label
+                                    for="orange">orange</label>
+                            </div>
+                            <div class="checkbox-item yellow">
+                                <input type="checkbox" class="checkbox" id="yellow" value="yellow"><label
+                                    for="yellow">yellow</label>
+                            </div>
+                            <div class="checkbox-item brown">
+                                <input type="checkbox" class="checkbox" id="brown" value="brown"><label
+                                    for="brown">brown</label>
+                            </div>
+                        </div>
+                        <div class="checkbox-col 2">
+                            <div class="checkbox-item green">
+                                <input type="checkbox" class="checkbox" id="green" value="green"><label
+                                    for="green">green</label>
+                            </div>
+                            <div class="checkbox-item red">
+                                <input type="checkbox" class="checkbox" id="red" value="red"><label
+                                    for="red">red</label>
+                            </div>
+                            <div class="checkbox-item blue">
+                                <input type="checkbox" class="checkbox" id="blue" value="blue"><label
+                                    for="blue">blue</label>
+                            </div>
+                            <div class="checkbox-item black">
+                                <input type="checkbox" class="checkbox" id="black" value="black"><label
+                                    for="black">black</label>
+                            </div>
+                        </div>
+                        <div class="checkbox-col 3">
+                            <div class="checkbox-item lilac">
+                                <input type="checkbox" class="checkbox" id="lilac" value="lilac"><label
+                                    for="lilac">lilac</label>
+                            </div>
+                            <div class="checkbox-item pink">
+                                <input type="checkbox" class="checkbox" id="pink" value="pink"><label
+                                    for="pink">pink</label>
+                            </div>
+                            <div class="checkbox-item white">
+                                <input type="checkbox" class="checkbox" id="white" value="white"><label
+                                    for="white">white</label>
+                            </div>
+                            <div class="checkbox-item gray">
+                                <input type="checkbox" class="checkbox" id="gray" value="gray"><label
+                                    for="gray">gray</label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </section>
+
+        <div id="h1-loading">
+            <h1 id="query-name-h1"></h1>
+        </div>
+
+        <section class="hero-section">
+            <ul class="flex-container" id="flex-container"></ul>
+        </section>
+    </div>
+
+    <div class="scrollToTopBtn"><a class="fa fa-angle-up" href="#"></a></div>
+
+    <script>
+
+        //toggle settings
+        function toggle_settings() {
+            var settings_section = document.getElementById("settings-section");
+            var settings_button = document.getElementById("settings-button");
+            if (settings_section.style.display === "flex") {
+                settings_section.style.display = "none";
+                settings_button.style.transform = "rotate(0deg)";
+            } else {
+                settings_section.style.display = "flex";
+                settings_button.style.transform = "rotate(90deg)";
+            }
+        }
+
+
+        // update slider values
+        const colors_slider = document.getElementById('numColors');
+        const colors_value = document.getElementById('size-value');
+        colors_slider.oninput = function () {
+            colors_value.innerHTML = this.value;
+        }
+
+        const images_slider = document.getElementById('numImages');
+        const images_value = document.getElementById('images-value');
+        images_slider.oninput = function () {
+            images_value.innerHTML = this.value;
+        }
+
+
+        async function getPalette() {
+
+            //check if the input is empty
+            if (document.getElementById("query-name").value == "") {
+                alert("Can't be empty");
+                return;
+            }
+
+            // get params
+
+            // get numColors slider value
+            var numColors = document.getElementById("numColors").value;
+            console.log(numColors);
+
+            // var numImages = 30;
+            var numImages = document.getElementById("numImages").value;
+            console.log(numImages);
+
+            // var colorList = ["blue", "transparent", "red"];
+            //get colorList value from checkboxes
+            var colorList = [];
+            var checkboxes = document.getElementsByClassName("checkbox");
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    colorList.push(checkboxes[i].value);
+                }
+            }
+            console.log(colorList);
+
+            // get the input value
+            var query = document.getElementById("query-name").value;
+            console.log(query);
+
+            //empty the color palette container
+            document.getElementById('flex-container').innerHTML = '';
+
+            // create a a loading text that will be shown while the data is being fetched
+            var loading = document.createElement('a');
+            loading.className = 'loading';
+            loading.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            document.getElementById('h1-loading').appendChild(loading);
+
+            // const url = 'http://localhost:8000/getpalette/' + query;
+
+            // build url with query and params
+            const url = 'http://localhost:8000/getpalette/' + query + '?numColors=' + numColors +
+                '&numImages=' +
+                numImages + '&colorList=' + colorList;
+
+            fetch(url).then((Response) => {
+                console.log(url);
+                return Response.json()
+            }).then((data) => {
+
+                // remove the loading animation
+                document.getElementById('h1-loading').removeChild(loading);
+
+                // show the name of the palette
+                document.getElementById('query-name-h1').innerHTML = query.toLowerCase();
+
+                // iterate over the data and create a new li for each Color
+                for (let i = 0; i < data[query].length; i++) {
+                    let li = document.createElement('li');
+                    let a = document.createElement('a');
+                    li.className = 'flex-item';
+                    li.style.backgroundColor = data[query][i];
+                    a.innerHTML = data[query][i].toUpperCase();
+                    a.id = 'hex-code'
+                    li.appendChild(a);
+                    document.getElementById('flex-container').appendChild(li);
+                }
+                console.log(data[query]);
+                // var palette = data[query];
+            }).catch((error) => {
+                document.getElementById('h1-loading').removeChild(loading);
+                alert("Not enough images found. Try again.");
+                console.error('Error:', error);
+
+            });
+
+            // show the title of the palette
+            document.getElementById('query-name-h1').innerHTML = "";
+
+            //clear the input after the search
+            document.getElementById("query-name").value = "";
+        }
+
+        // execute getPalette() when search box has text and enter key is pressed
+        document.getElementById("query-name").addEventListener("keyup", function (event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                getPalette();
+            }
+        });
+    </script>
+
+
+</body>
+
+<footer>
+    <div class="footer-container">
+        <p>Developed by <a href="https://github.com/daniarnaizg" target="_blank">Dani Arnaiz</a>  —  Powered by <a href="https://pixabay.com/" target="_blank"> <img src="./res/pixabay.png" alt="Pixabay"></a></p>
+    </div>
+</footer>
+
+</html>
